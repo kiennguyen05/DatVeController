@@ -1,0 +1,298 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Movie API",
+        "description": "API đặt vé xem phim",
+        "contact": {
+            "email": "support@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Localhost API server"
+        },
+        {
+            "url": "/api"
+        }
+    ],
+    "paths": {
+        "/api/ve": {
+            "post": {
+                "tags": [
+                    "DatVe"
+                ],
+                "summary": "Đặt vé xem phim",
+                "operationId": "d6200273547167341660bac78c86ec27",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ma_nguoi_dung": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "ma_sc": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "tong_tien": {
+                                        "type": "string",
+                                        "example": "150.000 VNĐ"
+                                    },
+                                    "loai_ve": {
+                                        "type": "string",
+                                        "example": "1:2,2:1"
+                                    },
+                                    "ghe": {
+                                        "type": "string",
+                                        "example": "A1,A2,A3"
+                                    },
+                                    "bap_nuoc": {
+                                        "type": "string",
+                                        "example": "1:2,2:1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Đặt vé thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "ma_ve": {
+                                            "type": "integer",
+                                            "example": 123
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Lỗi khi đặt vé"
+                    }
+                }
+            }
+        },
+        "/api/movies": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Lấy danh sách phim",
+                "operationId": "762df3bd66853db61112a7dc13f48e1c",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách phim",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Phim"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/{ma_phim}": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Lấy thông tin chi tiết một bộ phim",
+                "operationId": "f642698f77a6107a1f41834ce741bbc8",
+                "parameters": [
+                    {
+                        "name": "ma_phim",
+                        "in": "path",
+                        "description": "Mã phim cần lấy thông tin",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin phim",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Phim"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy phim"
+                    }
+                }
+            }
+        },
+        "/api/suatchieu/phim/{ma_phim}": {
+            "get": {
+                "tags": [
+                    "SuatChieu"
+                ],
+                "summary": "Lấy danh sách suất chiếu theo mã phim",
+                "operationId": "2a0249d35ac0b9a512c4965c180546c6",
+                "parameters": [
+                    {
+                        "name": "ma_phim",
+                        "in": "path",
+                        "description": "Mã phim cần lấy suất chiếu",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách suất chiếu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "ten_rap": {
+                                                "type": "string",
+                                                "example": "Rạp CGV Nguyễn Trãi"
+                                            },
+                                            "dia_chi": {
+                                                "type": "string",
+                                                "example": "123 Nguyễn Trãi, Quận 1, TP.HCM"
+                                            },
+                                            "suat_chieu": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "phong": {
+                                                            "type": "string",
+                                                            "example": "Phòng 1"
+                                                        },
+                                                        "thoi_gian_bd": {
+                                                            "type": "string",
+                                                            "example": "14:00"
+                                                        },
+                                                        "ngay_chieu": {
+                                                            "type": "string",
+                                                            "example": "25-03-2025"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không có suất chiếu"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Phim": {
+                "title": "Phim",
+                "description": "Thông tin về phim",
+                "properties": {
+                    "ma_phim": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "ten_phim": {
+                        "type": "string",
+                        "example": "Avengers: Endgame"
+                    },
+                    "mo_ta": {
+                        "type": "string",
+                        "example": "Phim siêu anh hùng"
+                    },
+                    "thoi_luong": {
+                        "type": "integer",
+                        "example": 180
+                    },
+                    "ngay_phat_hanh": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2019-04-26"
+                    },
+                    "anh": {
+                        "type": "string",
+                        "example": "https://example.com/image.jpg"
+                    },
+                    "hinh_thuc_chieu": {
+                        "type": "string",
+                        "example": "2D, 3D, IMAX"
+                    },
+                    "dao_dien": {
+                        "type": "string",
+                        "example": "Anthony Russo, Joe Russo"
+                    },
+                    "dien_vien": {
+                        "type": "string",
+                        "example": "Robert Downey Jr., Chris Evans"
+                    },
+                    "trang_thai": {
+                        "type": "string",
+                        "example": "Đang chiếu"
+                    },
+                    "do_tuoi": {
+                        "type": "string",
+                        "example": "13+"
+                    },
+                    "quoc_gia": {
+                        "type": "string",
+                        "example": "Mỹ"
+                    },
+                    "ngay_tao_phim": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00Z"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "SuatChieu",
+            "description": "API liên quan đến suất chiếu"
+        },
+        {
+            "name": "DatVe",
+            "description": "DatVe"
+        },
+        {
+            "name": "Movies",
+            "description": "Movies"
+        }
+    ]
+}
