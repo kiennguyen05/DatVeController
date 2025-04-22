@@ -13,26 +13,15 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class DatVe
  * 
- * @property int $ma_ve
- * @property int $ma_nguoi_dung
- * @property int $ma_suat_chieu
- * @property float $tong_gia_tien
- * @property int $tong_so_ve
- * @property Carbon $ngay_dat
  * 
- * @property SuatChieu $suat_chieu
- * @property NguoiDung $nguoi_dung
- * @property Collection|ChiTietDv[] $chi_tiet_dvs
- * @property Collection|ChiTietVe[] $chi_tiet_ves
- * @property Collection|VeDat[] $ve_dats
- *
- * @package App\Models
+
  */
 class DatVe extends Model
 {
 	protected $table = 'dat_ve';
 	protected $primaryKey = 'ma_ve';
 	public $timestamps = false;
+	public $incrementing = false;
 
 	protected $casts = [
 		'ma_nguoi_dung' => 'int',
@@ -65,10 +54,6 @@ class DatVe extends Model
 		return $this->hasMany(ChiTietDv::class, 'ma_ve');
 	}
 
-	public function chi_tiet_ves()
-	{
-		return $this->hasMany(ChiTietVe::class, 'ma_ve');
-	}
 
 	public function ve_dats()
 	{

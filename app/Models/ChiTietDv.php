@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class ChiTietDv
  *
- * @property int $ma_ve
+ * @property string $ma_ve
  * @property int $ma_dv_an_uong
  * @property int $so_luong
  * @property float $tong_gia_tien
@@ -28,7 +28,7 @@ class ChiTietDv extends Model
     public $timestamps = false;
 
     protected $casts = [
-        'ma_ve' => 'int',
+        'ma_ve' => 'string',
         'ma_dv_an_uong' => 'int',
         'so_luong' => 'int',
         'tong_gia_tien' => 'float'

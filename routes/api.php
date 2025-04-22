@@ -16,10 +16,10 @@ use Illuminate\Support\Facades\Route;
     });
 });
 
-Route::prefix('/admin/datve')->group(function () {
-    Route::get('/', [DatVeController::class, 'index']);
-    Route::put('/approve/{ma_ve}', [DatVeController::class, 'approve']);
+Route::prefix('/admin')->group(function () {
+    Route::get('/datve', [DatVeController::class, 'index']);
+    Route::get('/datve/{ma_ve}', [DatVeController::class, 'show']);
     Route::put('/cancel/{ma_ve}', [DatVeController::class, 'cancel']);
-    Route::delete('/{ma_ve}', [DatVeController::class, 'destroy']);
+    Route::delete('/datve/{ma_ve}', [DatVeController::class, 'destroy']);
 });
 

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class VeDat
  *
- * @property int $ma_ve
+ * @property string $ma_ve
  * @property int $ma_loai_ve
  * @property int $so_luong
  * @property float $gia_tien
@@ -28,11 +28,11 @@ class VeDat extends Model
     public $timestamps = false;
 
     protected $casts = [
-        'ma_ve' => 'int',
+        'ma_ve' => 'string',
         'ma_loai_ve' => 'int',
         'so_luong' => 'int',
         'gia_tien' => 'float',
-        ''
+        
     ];
 
     protected $fillable = [

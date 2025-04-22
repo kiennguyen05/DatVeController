@@ -33,57 +33,32 @@ class DatVeController extends Controller
 }
 
     // 2. Duyệt vé
-    public function approve($ma_ve)
+    public function show($ma_ve)
     {
-        try {
-            $ticket = DatVe::findOrFail($ma_ve);
-            $ticket->update(['status' => 'approved']);
-            
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Vé đã được duyệt',
-                'data' => $ticket->load([
-                    'suat_chieu.phim',
-                    'suat_chieu.phongchieu.rapphim',
-                    've_dats.ghe_ngoi',
-                    'nguoi_dung',
-                    'chi_tiet_dvs.dv_an_uong'
-                ])
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Không thể duyệt vé',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
+        $ticket = DatVe::with([
+            'nguoi_dung',
+            'suat_chieu.phim',
+            'suat_chieu.phongChieu',
+            'chi_tiet_dvs.dv_an_uong',
+            've_dats.loai_ve',
+            've_dats.ghe_ngoi'
+        ])->findOrFail($ma_ve);
 
+        return response()->json($ticket);
+    }
     // 3. Hủy vé
     public function cancel($ma_ve)
 {
-    try {
-        $ticket = DatVe::findOrFail($ma_ve);
-        $ticket->update(['status' => 'cancelled']);
-        
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Vé đã bị hủy',
-            'data' => $ticket->load([
-                'suat_chieu.phim',
-                'suat_chieu.phongchieu.rapphim',
-                've_dats.ghe_ngoi',
-                'nguoi_dung',
-                'chi_tiet_dvs.dv_an_uong'
-            ])
-        ], 200);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Không thể hủy vé',
-            'error' => $e->getMessage()
-        ], 500);
+    $ticket = DatVe::findOrFail($ma_ve);
+    if ($ticket->trang_thai === 'Đã hủy') {
+        return response()->json(['message' => 'Vé đã được hủy trước đó'], 400);
     }
+    if (now()->greaterThan($ticket->suat_chieu->ngay_chieu)) {
+        return response()->json(['message' => 'Không thể hủy vé sau giờ chiếu'], 400);
+    }
+    $ticket->trang_thai = 'Đã hủy';
+    $ticket->save();
+    return response()->json(['message' => 'Hủy vé thành công']);
 }
 
     // 4. Xóa vé
@@ -92,7 +67,7 @@ class DatVeController extends Controller
     try {
         $ticket = DatVe::findOrFail($ma_ve);
         
-        // Xóa các bản ghi liên quan trong ve_dat
+        // Xóa các bản ghi liên quan trong ve_dat.012
         $ticket->ve_dats()->delete();
         
         // Xóa các bản ghi liên quan trong chi_tiet_dv (nếu đã áp dụng từ lỗi trước)
