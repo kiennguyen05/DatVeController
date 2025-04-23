@@ -15,7 +15,9 @@ class DatVeController extends Controller
             'suat_chieu.phim',
             'suat_chieu.phongchieu',
             'nguoi_dung',
-            'chi_tiet_dvs'
+            've_dats.ghe_ngoi',      // Đảm bảo load ghế
+            've_dats.loai_ve',
+            'chi_tiet_dvs.dv_an_uong'
         ])->get();
         
         return response()->json([
@@ -49,6 +51,19 @@ class DatVeController extends Controller
     // 3. Hủy vé
     public function cancel($ma_ve)
 {
+    
+    // try {
+    //     $ticket = DatVe::with('suat_chieu')->findOrFail($ma_ve);
+    //     // Cập nhật trạng thái vé thành "Đã hủy"
+    //     $ticket->trang_thai = 'Đã hủy';
+    //     $ticket->save();
+
+    //     // Trả về thông báo thành công
+    //     return response()->json(['message' => 'Hủy vé thành công'], 200);
+    // } catch (\Exception $e) {
+    //     // Trả về lỗi nếu lưu database thất bại
+    //     return response()->json(['message' => 'Lỗi khi hủy vé, vui lòng thử lại'], 500);
+    // }
     $ticket = DatVe::with('suat_chieu')->findOrFail($ma_ve);
 
     // Kiểm tra nếu vé đã hủy
