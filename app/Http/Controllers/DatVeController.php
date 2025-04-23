@@ -51,51 +51,56 @@ class DatVeController extends Controller
     // 3. Hủy vé
     public function cancel($ma_ve)
 {
-    
-    // try {
-    //     $ticket = DatVe::with('suat_chieu')->findOrFail($ma_ve);
-    //     // Cập nhật trạng thái vé thành "Đã hủy"
-    //     $ticket->trang_thai = 'Đã hủy';
-    //     $ticket->save();
-
-    //     // Trả về thông báo thành công
-    //     return response()->json(['message' => 'Hủy vé thành công'], 200);
-    // } catch (\Exception $e) {
-    //     // Trả về lỗi nếu lưu database thất bại
-    //     return response()->json(['message' => 'Lỗi khi hủy vé, vui lòng thử lại'], 500);
-    // }
     $ticket = DatVe::with('suat_chieu')->findOrFail($ma_ve);
-
-    // Kiểm tra nếu vé đã hủy
     if ($ticket->trang_thai === 'Đã hủy') {
         return response()->json(['message' => 'Vé đã được hủy trước đó'], 400);
     }
+    
+    try {
+        
+        // Cập nhật trạng thái vé thành "Đã hủy"
+        $ticket->trang_thai = 'Đã hủy';
+        $ticket->save();
 
-    // Lấy thời gian hiện tại và thời gian chiếu
-    $now = now();
-    $showtime = $ticket->suat_chieu->ngay_chieu;
-
-    // Sau giờ chiếu, không thể hủy bất kể trạng thái
-    if ($now->greaterThan($showtime)) {
-        return response()->json(['message' => 'Không thể hủy vé sau giờ chiếu'], 400);
+        // Trả về thông báo thành công
+        return response()->json(['message' => 'Hủy vé thành công'], 200);
+    } catch (\Exception $e) {
+        // Trả về lỗi nếu lưu database thất bại
+        return response()->json(['message' => 'Lỗi khi hủy vé, vui lòng thử lại'], 500);
     }
 
-    // Nếu đang chờ thanh toán, có thể hủy bất kể thời gian (trừ sau giờ chiếu)
-    if ($ticket->trang_thai === 'Đang chờ thanh toán') {
-        $ticket->trang_thai = 'Đã hủy'; // Cập nhật trạng thái
-        $ticket->save(); // Lưu vào database
-        return response()->json(['message' => 'Hủy vé thành công']);
-    }
+    
 
-    // Nếu đã thanh toán, chỉ hủy được trước giờ chiếu
-    if ($ticket->trang_thai === 'Đã thanh toán') {
-        $ticket->trang_thai = 'Đã hủy'; // Cập nhật trạng thái
-        $ticket->save(); // Lưu vào database
-        return response()->json(['message' => 'Hủy vé thành công']);
-    }
+//     // Kiểm tra nếu vé đã hủy
+//     if ($ticket->trang_thai === 'Đã hủy') {
+//         return response()->json(['message' => 'Vé đã được hủy trước đó'], 400);
+//     }
 
-    // Các trạng thái khác không cho phép hủy
-    return response()->json(['message' => 'Không thể hủy vé ở trạng thái hiện tại'], 400);
+//     // Lấy thời gian hiện tại và thời gian chiếu
+//     $now = now();
+//     $showtime = $ticket->suat_chieu->ngay_chieu;
+
+//     // Sau giờ chiếu, không thể hủy bất kể trạng thái
+//     if ($now->greaterThan($showtime)) {
+//         return response()->json(['message' => 'Không thể hủy vé sau giờ chiếu'], 400);
+//     }
+
+//     // Nếu đang chờ thanh toán, có thể hủy bất kể thời gian (trừ sau giờ chiếu)
+//     if ($ticket->trang_thai === 'Đang chờ thanh toán') {
+//         $ticket->trang_thai = 'Đã hủy'; // Cập nhật trạng thái
+//         $ticket->save(); // Lưu vào database
+//         return response()->json(['message' => 'Hủy vé thành công']);
+//     }
+
+//     // Nếu đã thanh toán, chỉ hủy được trước giờ chiếu
+//     if ($ticket->trang_thai === 'Đã thanh toán') {
+//         $ticket->trang_thai = 'Đã hủy'; // Cập nhật trạng thái
+//         $ticket->save(); // Lưu vào database
+//         return response()->json(['message' => 'Hủy vé thành công']);
+//     }
+
+//     // Các trạng thái khác không cho phép hủy
+//     return response()->json(['message' => 'Không thể hủy vé ở trạng thái hiện tại'], 400);
 }
 
     // 4. Xóa vé
