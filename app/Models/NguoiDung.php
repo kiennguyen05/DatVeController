@@ -1,54 +1,46 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-/**
- * Class NguoiDung
- * 
- * @property int $ma_nguoi_dung
- * @property string $ho_ten
- * @property string $email
- * @property string $mat_khau
- * @property string $sdt
- * @property string $vai_tro
- * @property Carbon $ngay_sinh
- * @property Carbon $ngay_tao_nd
- * 
- * @property Collection|DatVe[] $dat_ves
- *
- * @package App\Models
- */
-class NguoiDung extends Model
+class NguoiDung extends Authenticatable
 {
-	protected $table = 'nguoi_dung';
-	protected $primaryKey = 'ma_nguoi_dung';
-	public $timestamps = false;
+    use HasFactory, Notifiable;
 
-	protected $casts = [
-		'ngay_sinh' => 'datetime',
-		'ngay_tao_nd' => 'datetime'
-	];
+    protected $table = 'nguoi_dung';
+    protected $primaryKey = 'ma_nguoi_dung';
+    public $timestamps = false;
 
-	protected $fillable = [
-		'ho_ten',
-		'email',
-		'mat_khau',
-		'sdt',
-		'vai_tro',
-		'ngay_sinh',
-		'ngay_tao_nd'
-	];
+    protected $casts = [
+        'ngay_sinh' => 'datetime',
+        'ngay_tao_nd' => 'datetime',
+        'mat_khau' => 'hashed',
+    ];
 
-	public function dat_ves()
-	{
-		return $this->hasMany(DatVe::class, 'ma_nguoi_dung');
-	}
+    protected $fillable = [
+        'ho_ten',
+        'email',
+        'mat_khau',
+        'sdt',
+        'vai_tro',
+        'ngay_sinh',
+        'ngay_tao_nd',
+    ];
+
+    protected $hidden = [
+        'mat_khau',
+    ];
+
+    public function dat_ves()
+    {
+        return $this->hasMany(DatVe::class, 'nguoi_dung_id', 'ma_nguoi_dung');
+    }
+
+    public function getAuthPassword()
+    {
+        return $this->mat_khau;
+    }
 }

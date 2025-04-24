@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\DatVe;
+use App\Models\NguoiDung;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 class DatVeController extends Controller
 {
     // 1. Lấy danh sách vé
@@ -130,4 +131,46 @@ class DatVeController extends Controller
         ], 500);
     }
 }
+/**
+     * Lấy danh sách vé của khách hàng đã đăng nhập
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserTickets()
+    {
+        try {
+            $user = NguoiDung::user();
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Chưa đăng nhập'
+                ], 401);
+            }
+
+            $tickets = DatVe::with([
+                'suat_chieu.phim',
+                'suat_chieu.phongchieu',
+                'nguoi_dung',
+                've_dats.ghe_ngoi',
+                've_dats.loai_ve',
+                'chi_tiet_dvs.dv_an_uong'
+            ])
+            ->where('nguoi_dung_id', $user->id)
+            ->get();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Lấy danh sách vé của khách hàng thành công',
+                'data' => $tickets
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi lấy vé của khách hàng: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không thể lấy danh sách vé',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
